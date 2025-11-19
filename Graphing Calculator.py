@@ -15,6 +15,16 @@ def combine_numbers(fx):
         i += 1
     return fx
 
+def combine_decimals(fx):
+    i = 0
+    while i < len(fx)-1:
+        if fx[i] == ".":
+            fx[i-1] += fx.pop(i)
+            fx[i-1] += fx.pop(i)
+            i = 0
+        i += 1
+    return fx
+
 def convert_to_numbers(fx):
     for i in range(len(fx)):
         if can_be_number(fx[i]):
@@ -93,6 +103,7 @@ def calculate(fx):
 fx_input = list(input("function: "))
 x = float(input("x: "))
 fx_input = combine_numbers(fx_input)
+fx_input = combine_decimals(fx_input)
 fx_input = convert_to_numbers(fx_input)
 fx_input = insert_x(fx_input, x)
 print(calculate(fx_input)[0])
