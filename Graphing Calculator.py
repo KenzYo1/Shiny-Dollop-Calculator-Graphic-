@@ -135,8 +135,14 @@ def calculate(fx):
         if fx[i] == "(":
             fx.pop(i)
             fx2 = []
-            while fx[i] != ")":
-                fx2.append(fx.pop(i))
+            bracket_count = 0
+            while bracket_count >= 0:
+                if fx[i] == "(":
+                    bracket_count += 1
+                if fx[i] == ")":
+                    bracket_count -= 1
+                if bracket_count >= 0:
+                    fx2.append(fx.pop(i))
             fx[i] = calculate(fx2)
             has_brackets = check_brackets(fx)
             has_logarithms = check_logarithms(fx)
@@ -154,12 +160,12 @@ def calculate(fx):
             has_powers = check_powers(fx)
             has_multiplication_division = check_multiplication_division(fx)
             i = 0
-        elif fx[i] == "log" and not has_brackets:
+        elif fx[i] == "log" and fx[i+1] != "log" and fx[i+1] != "ln" and not has_brackets:
             fx[i] = math.log10(fx[i+1])
             fx.pop(i+1)
             has_logarithms = check_logarithms(fx)
             i = 0
-        elif fx[i] == "ln" and not has_brackets:
+        elif fx[i] == "ln" and fx[i+1] != "log" and fx[i+1] != "ln" and not has_brackets:
             fx[i] = math.log(fx[i+1])
             fx.pop(i+1)
             has_logarithms = check_logarithms(fx)
