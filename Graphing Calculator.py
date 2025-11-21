@@ -90,7 +90,7 @@ def convert_operators(fx):
 def convert_mult_shorthand(fx):
     i = 0
     while i < len(fx)-1:
-        if ((is_number(fx[i]) or fx[i] == "x") and (is_number(fx[i+1]) or fx[i+1] == "x" or fx[i+1] == "(")) or ((fx[i] == "x" or fx[i] == ")") and (is_number(fx[i+1]) or fx[i+1] == "x")) or (fx[i] == ")" and fx[i+1] == "("):
+        if ((is_number(fx[i]) or fx[i] == "x") and (is_number(fx[i+1]) or fx[i+1] == "x" or fx[i+1] == "(")) or ((is_number(fx[i]) or fx[i] == "x" or fx[i] == ")") and (is_number(fx[i+1]) or fx[i+1] == "x" or fx[i+1] == "log" or fx[i+1] == "ln")) or (fx[i] == ")" and fx[i+1] == "("):
             fx.insert(i+1, "*")
             i = 0
         i += 1
@@ -139,6 +139,9 @@ def calculate(fx):
                 fx2.append(fx.pop(i))
             fx[i] = calculate(fx2)
             has_brackets = check_brackets(fx)
+            has_logarithms = check_logarithms(fx)
+            has_powers = check_powers(fx)
+            has_multiplication_division = check_multiplication_division(fx)
             i = 0
         elif fx[i] == "|":
             fx.pop(i)
@@ -147,6 +150,9 @@ def calculate(fx):
                 fx2.append(fx.pop(i))
             fx[i] = abs(calculate(fx2))
             has_brackets = check_brackets(fx)
+            has_logarithms = check_logarithms(fx)
+            has_powers = check_powers(fx)
+            has_multiplication_division = check_multiplication_division(fx)
             i = 0
         elif fx[i] == "log" and not has_brackets:
             fx[i] = math.log10(fx[i+1])
