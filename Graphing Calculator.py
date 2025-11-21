@@ -48,7 +48,7 @@ def convert_negatives(fx):
         i += 1
     return fx
 
-def convert_to_numbers(fx):
+def convert_to_floats(fx):
     for i in range(len(fx)):
         if is_number(fx[i]):
             fx[i] = float(fx[i])
@@ -206,7 +206,7 @@ combine_numbers(fx_input)
 convert_commas(fx_input)
 combine_decimals(fx_input)
 convert_negatives(fx_input)
-convert_to_numbers(fx_input)
+convert_to_floats(fx_input)
 convert_constants(fx_input)
 convert_operators(fx_input)
 convert_mult_shorthand(fx_input)
