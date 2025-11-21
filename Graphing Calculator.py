@@ -1,6 +1,9 @@
+import math
 import turtle
 
-def can_be_number(item):
+def is_number(item):
+    if isinstance(item, float):
+        return True
     numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
     for i in item:
         if i in numbers:
@@ -10,7 +13,7 @@ def can_be_number(item):
 def combine_numbers(fx):
     i = 0
     while i < len(fx)-1:
-        if can_be_number(fx[i]) and can_be_number(fx[i+1]):
+        if is_number(fx[i]) and is_number(fx[i+1]):
             fx[i] += fx.pop(i+1)
             i = 0
         i += 1
@@ -42,26 +45,40 @@ def convert_negatives(fx):
                     fx.insert(i+1, "*")
                     i = 0
                 case _:
-                    if not can_be_number(fx[i-1]):
+                    if not is_number(fx[i-1]):
                         fx[i] = "-1"
                         fx.insert(i+1, "*")
                         i = 0
         i += 1
     return fx
 
+def convert_to_numbers(fx):
+    for i in range(len(fx)):
+        if is_number(fx[i]):
+            fx[i] = float(fx[i])
+    return fx
+
+def convert_constants(fx):
+    i = 0
+    while i < len(fx):
+        match fx[i]:
+            case "p":
+                if fx[i+1] == "i":
+                    fx[i] = math.pi
+                    fx.pop(i+1)
+                    i = 0
+            case "e":
+                fx[i] = math.e
+        i += 1
+    return fx
+
 def convert_mult_shorthand(fx):
     i = 0
     while i < len(fx)-1:
-        if ((can_be_number(fx[i]) or fx[i] == "x") and (fx[i+1] == "x" or fx[i+1] == "(")) or ((fx[i] == "x" or fx[i] == ")") and (can_be_number(fx[i+1]) or fx[i+1] == "x")) or (fx[i] == ")" and fx[i+1] == "("):
+        if ((is_number(fx[i]) or fx[i] == "x") and (is_number(fx[i+1]) or fx[i+1] == "x" or fx[i+1] == "(")) or ((fx[i] == "x" or fx[i] == ")") and (is_number(fx[i+1]) or fx[i+1] == "x")) or (fx[i] == ")" and fx[i+1] == "("):
             fx.insert(i+1, "*")
             i = 0
         i += 1
-
-def convert_to_numbers(fx):
-    for i in range(len(fx)):
-        if can_be_number(fx[i]):
-            fx[i] = float(fx[i])
-    return fx
 
 def insert_x(fx, x):
     for i in range(len(fx)):
@@ -150,8 +167,9 @@ combine_numbers(fx_input)
 convert_commas(fx_input)
 combine_decimals(fx_input)
 convert_negatives(fx_input)
-convert_mult_shorthand(fx_input)
 convert_to_numbers(fx_input)
+convert_constants(fx_input)
+convert_mult_shorthand(fx_input)
 print(fx_input)
 points = []
 for i in range(201):
