@@ -1,4 +1,4 @@
-#f:Array
+import turtle
 
 def can_be_number(item):
     numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
@@ -13,6 +13,12 @@ def combine_numbers(fx):
             fx[i] += fx.pop(i+1)
             i = 0
         i += 1
+    return fx
+
+def convert_commas(fx):
+    for i in range(len(fx)):
+        if fx[i] == ",":
+            fx[i] == "."
     return fx
 
 def combine_decimals(fx):
@@ -71,6 +77,8 @@ def calculate(fx):
             i = 0
         elif fx[i] == "^" and not has_brackets:
             fx[i-1] = fx[i-1] ** fx[i+1]
+            if isinstance(fx[i-1], complex):
+                return None
             fx.pop(i)
             fx.pop(i)
             has_powers = check_powers(fx)
@@ -98,12 +106,20 @@ def calculate(fx):
             fx.pop(i)
             i = 0
         i += 1
-    return fx
+    return fx[0]
 
 fx_input = list(input("function: "))
-x = float(input("x: "))
-fx_input = combine_numbers(fx_input)
-fx_input = combine_decimals(fx_input)
-fx_input = convert_to_numbers(fx_input)
-fx_input = insert_x(fx_input, x)
-print(calculate(fx_input)[0])
+combine_numbers(fx_input)
+convert_commas(fx_input)
+combine_decimals(fx_input)
+convert_to_numbers(fx_input)
+points = []
+for i in range(201):
+    x = (i-100)*0.1
+    try:
+        y = calculate(insert_x(fx_input.copy(), x))
+    except:
+        y = None
+    points.append([x, y])
+for point in points:
+    print(point)
