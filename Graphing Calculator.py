@@ -170,7 +170,6 @@ convert_negatives(fx_input)
 convert_to_numbers(fx_input)
 convert_constants(fx_input)
 convert_mult_shorthand(fx_input)
-print(fx_input)
 points = []
 for i in range(201):
     x = (i-100)*0.1
