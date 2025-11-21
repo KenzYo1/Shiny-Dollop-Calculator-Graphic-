@@ -15,7 +15,6 @@ def combine_numbers(fx):
     while i < len(fx)-1:
         if is_number(fx[i]) and is_number(fx[i+1]):
             fx[i] += fx.pop(i+1)
-            i = 0
         i += 1
     return fx
 
@@ -31,7 +30,6 @@ def combine_decimals(fx):
         if fx[i] == ".":
             fx[i-1] += fx.pop(i)
             fx[i-1] += fx.pop(i)
-            i = 0
         i += 1
     return fx
 
@@ -43,12 +41,10 @@ def convert_negatives(fx):
                 case 0:
                     fx[i] = "-1"
                     fx.insert(i+1, "*")
-                    i = 0
                 case _:
                     if not is_number(fx[i-1]):
                         fx[i] = "-1"
                         fx.insert(i+1, "*")
-                        i = 0
         i += 1
     return fx
 
@@ -66,7 +62,6 @@ def convert_constants(fx):
                 if fx[i+1] == "i":
                     fx[i] = math.pi
                     fx.pop(i+1)
-                    i = 0
             case "e":
                 fx[i] = math.e
         i += 1
@@ -92,7 +87,6 @@ def convert_mult_shorthand(fx):
     while i < len(fx)-1:
         if ((is_number(fx[i]) or fx[i] == "x") and (is_number(fx[i+1]) or fx[i+1] == "x" or fx[i+1] == "(")) or ((is_number(fx[i]) or fx[i] == "x" or fx[i] == ")") and (is_number(fx[i+1]) or fx[i+1] == "x" or fx[i+1] == "log" or fx[i+1] == "ln")) or (fx[i] == ")" and fx[i+1] == "("):
             fx.insert(i+1, "*")
-            i = 0
         i += 1
 
 def insert_x(fx, x):
