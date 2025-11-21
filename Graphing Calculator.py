@@ -11,7 +11,7 @@ def is_number(item):
     return False
 
 def is_operator(item):
-    operators = ["log", "ln", "sin", "cos", "tan"]
+    operators = ["log", "ln", "sin", "cos", "tan", "asin", "acos", "atan"]
     if item in operators:
         return True
     return False
@@ -79,29 +79,43 @@ def convert_operators(fx):
     while i < len(fx):
         match fx[i]:
             case "l":
-                if fx[i+1] == "o":
-                    if fx[i+2] == "g":
+                match fx[i+1]:
+                    case "o":
                         fx[i] = "log"
                         fx.pop(i+1)
                         fx.pop(i+1)
-                elif fx[i+1] == "n":
-                    fx[i] = "ln"
-                    fx.pop(i+1)
+                    case "n":
+                        fx[i] = "ln"
+                        fx.pop(i+1)
             case "s":
-                if fx[i+1] == "i" and fx[i+2] == "n":
-                    fx[i] = "sin"
-                    fx.pop(i+1)
-                    fx.pop(i+1)
+                fx[i] = "sin"
+                fx.pop(i+1)
+                fx.pop(i+1)
             case "c":
-                if fx[i+1] == "o" and fx[i+2] == "s":
-                    fx[i] = "cos"
-                    fx.pop(i+1)
-                    fx.pop(i+1)
+                fx[i] = "cos"
+                fx.pop(i+1)
+                fx.pop(i+1)
             case "t":
-                if fx[i+1] == "a" and fx[i+2] == "n":
-                    fx[i] = "tan"
-                    fx.pop(i+1)
-                    fx.pop(i+1)
+                fx[i] = "tan"
+                fx.pop(i+1)
+                fx.pop(i+1)
+            case "a":
+                match fx[i+1]:
+                    case "s":
+                        fx[i] = "asin"
+                        fx.pop(i+1)
+                        fx.pop(i+1)
+                        fx.pop(i+1)
+                    case "c":
+                        fx[i] = "acos"
+                        fx.pop(i+1)
+                        fx.pop(i+1)
+                        fx.pop(i+1)
+                    case "t":
+                        fx[i] = "atan"
+                        fx.pop(i+1)
+                        fx.pop(i+1)
+                        fx.pop(i+1)
         i += 1
     return fx
 
@@ -199,6 +213,21 @@ def calculate(fx):
             i = 0
         elif fx[i] == "tan" and not is_operator(fx[i+1]) and not has_brackets:
             fx[i] = math.tan(fx[i+1])
+            fx.pop(i+1)
+            has_operators = check_operators(fx)
+            i = 0
+        elif fx[i] == "asin" and not is_operator(fx[i+1]) and not has_brackets:
+            fx[i] = math.asin(fx[i+1])
+            fx.pop(i+1)
+            has_operators = check_operators(fx)
+            i = 0
+        elif fx[i] == "acos" and not is_operator(fx[i+1]) and not has_brackets:
+            fx[i] = math.acos(fx[i+1])
+            fx.pop(i+1)
+            has_operators = check_operators(fx)
+            i = 0
+        elif fx[i] == "atan" and not is_operator(fx[i+1]) and not has_brackets:
+            fx[i] = math.atan(fx[i+1])
             fx.pop(i+1)
             has_operators = check_operators(fx)
             i = 0
