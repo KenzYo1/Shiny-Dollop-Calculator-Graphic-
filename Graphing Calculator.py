@@ -34,7 +34,7 @@ def combine_decimals(fx):
 def convert_mult_shorthand(fx):
     i = 0
     while i < len(fx)-1:
-        if ((can_be_number(fx[i]) or fx[i] == "x") and (fx[i+1] == "x" or fx[i+1] == "(")) or ((can_be_number(fx[i+1]) or fx[i+1] == "x") and (fx[i] == "x" or fx[i] == "(")):
+        if ((can_be_number(fx[i]) or fx[i] == "x") and (fx[i+1] == "x" or fx[i+1] == "(")) or ((can_be_number(fx[i+1]) or fx[i+1] == "x") and (fx[i] == "x" or fx[i] == ")")):
             fx.insert(i+1, "*")
             i = 0
         i += 1
