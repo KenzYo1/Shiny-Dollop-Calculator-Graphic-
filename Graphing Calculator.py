@@ -106,7 +106,10 @@ def calculate(fx):
             fx.pop(i)
             i = 0
         i += 1
-    return fx[0]
+    if len(fx) == 1:
+        return fx[0]
+    else:
+        return None
 
 fx_input = list(input("function: "))
 combine_numbers(fx_input)
