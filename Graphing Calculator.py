@@ -34,7 +34,7 @@ def combine_decimals(fx):
 def convert_mult_shorthand(fx):
     i = 0
     while i < len(fx)-1:
-        if ((can_be_number(fx[i]) or fx[i] == "x") and (fx[i+1] == "x" or fx[i+1] == "(")) or ((can_be_number(fx[i+1]) or fx[i+1] == "x") and (fx[i] == "x" or fx[i] == ")")) or (fx[i] == ")" and fx[i+1] == "("):
+        if ((can_be_number(fx[i]) or fx[i] == "x") and (fx[i+1] == "x" or fx[i+1] == "(")) or ((fx[i] == "x" or fx[i] == ")") and (can_be_number(fx[i+1]) or fx[i+1] == "x")) or (fx[i] == ")" and fx[i+1] == "("):
             fx.insert(i+1, "*")
             i = 0
         i += 1
@@ -53,7 +53,7 @@ def insert_x(fx, x):
 
 def check_brackets(fx):
     for i in range(len(fx)):
-        if fx[i] == "(":
+        if fx[i] == "(" or fx[i] == "|":
             return True
     return False
 
@@ -81,6 +81,14 @@ def calculate(fx):
             while fx[i] != ")":
                 fx2.append(fx.pop(i))
             fx[i] = calculate(fx2)
+            has_brackets = check_brackets(fx)
+            i = 0
+        if fx[i] == "|":
+            fx.pop(i)
+            fx2 = []
+            while fx[i] != "|":
+                fx2.append(fx.pop(i))
+            fx[i] = abs(calculate(fx2))
             has_brackets = check_brackets(fx)
             i = 0
         elif fx[i] == "^" and not has_brackets:
