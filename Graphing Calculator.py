@@ -21,7 +21,6 @@ def combine_numbers(fx):
     while i < len(fx)-1:
         if is_number(fx[i]) and is_number(fx[i+1]):
             fx[i] += fx.pop(i+1)
-            i = 0
         else:
             i += 1
     return fx
