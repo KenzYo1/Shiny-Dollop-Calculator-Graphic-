@@ -72,6 +72,21 @@ def convert_constants(fx):
         i += 1
     return fx
 
+def convert_operators(fx):
+    i = 0
+    while i < len(fx):
+        if fx[i] == "l":
+            if fx[i+1] == "o":
+                if fx[i+2] == "g":
+                    fx[i] = "log"
+                    fx.pop(i+1)
+                    fx.pop(i+1)
+            elif fx[i+1] == "n":
+                fx[i] = "ln"
+                fx.pop(i+1)
+        i += 1
+    return fx
+
 def convert_mult_shorthand(fx):
     i = 0
     while i < len(fx)-1:
@@ -92,6 +107,12 @@ def check_brackets(fx):
             return True
     return False
 
+def check_logarithms(fx):
+    for i in fx:
+        if i == "log" or i == "ln":
+            return True
+    return False
+
 def check_powers(fx):
     for i in range(len(fx)):
         if fx[i] == "^":
@@ -107,6 +128,7 @@ def check_multiplication_division(fx):
 def calculate(fx):
     i = 0
     has_brackets = check_brackets(fx)
+    has_logarithms = check_logarithms(fx)
     has_powers = check_powers(fx)
     has_multiplication_division = check_multiplication_division(fx)
     while i < len(fx):
@@ -118,7 +140,7 @@ def calculate(fx):
             fx[i] = calculate(fx2)
             has_brackets = check_brackets(fx)
             i = 0
-        if fx[i] == "|":
+        elif fx[i] == "|":
             fx.pop(i)
             fx2 = []
             while fx[i] != "|":
@@ -126,7 +148,17 @@ def calculate(fx):
             fx[i] = abs(calculate(fx2))
             has_brackets = check_brackets(fx)
             i = 0
-        elif fx[i] == "^" and not has_brackets:
+        elif fx[i] == "log" and not has_brackets:
+            fx[i] = math.log10(fx[i+1])
+            fx.pop(i+1)
+            has_logarithms = check_logarithms(fx)
+            i = 0
+        elif fx[i] == "ln" and not has_brackets:
+            fx[i] = math.log(fx[i+1])
+            fx.pop(i+1)
+            has_logarithms = check_logarithms(fx)
+            i = 0
+        elif fx[i] == "^" and not has_brackets and not has_logarithms:
             fx[i-1] = fx[i-1] ** fx[i+1]
             if isinstance(fx[i-1], complex):
                 return None
@@ -134,29 +166,30 @@ def calculate(fx):
             fx.pop(i)
             has_powers = check_powers(fx)
             i = 0
-        elif fx[i] == "*" and not has_powers and not has_brackets:
+        elif fx[i] == "*" and not has_brackets and not has_logarithms and not has_powers:
             fx[i-1] = fx[i-1] * fx[i+1]
             fx.pop(i)
             fx.pop(i)
             has_multiplication_division = check_multiplication_division(fx)
             i = 0
-        elif fx[i] == "/" and not has_powers and not has_brackets:
+        elif fx[i] == "/" and not has_brackets and not has_logarithms and not has_powers:
             fx[i-1] = fx[i-1] / fx[i+1]
             fx.pop(i)
             fx.pop(i)
             has_multiplication_division = check_multiplication_division(fx)
             i = 0
-        elif fx[i] == "+" and not has_powers and not has_brackets and not has_multiplication_division:
+        elif fx[i] == "+" and not has_brackets and not has_logarithms and not has_powers and not has_multiplication_division:
             fx[i-1] = fx[i-1] + fx[i+1]
             fx.pop(i)
             fx.pop(i)
             i = 0
-        elif fx[i] == "-" and not has_powers and not has_brackets and not has_multiplication_division:
+        elif fx[i] == "-" and not has_brackets and not has_logarithms and not has_powers and not has_multiplication_division:
             fx[i-1] = fx[i-1] - fx[i+1]
             fx.pop(i)
             fx.pop(i)
             i = 0
-        i += 1
+        else:
+            i += 1
     if len(fx) == 1:
         return fx[0]
     else:
@@ -169,6 +202,7 @@ combine_decimals(fx_input)
 convert_negatives(fx_input)
 convert_to_numbers(fx_input)
 convert_constants(fx_input)
+convert_operators(fx_input)
 convert_mult_shorthand(fx_input)
 points = []
 for i in range(201):
