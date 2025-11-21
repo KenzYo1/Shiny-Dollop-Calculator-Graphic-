@@ -99,7 +99,7 @@ def convert_operators(fx):
                     fx.pop(i+1)
             case "t":
                 if fx[i+1] == "a" and fx[i+2] == "n":
-                    fx[i] = "sin"
+                    fx[i] = "tan"
                     fx.pop(i+1)
                     fx.pop(i+1)
         i += 1
