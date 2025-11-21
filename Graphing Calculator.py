@@ -18,7 +18,7 @@ def combine_numbers(fx):
 def convert_commas(fx):
     for i in range(len(fx)):
         if fx[i] == ",":
-            fx[i] == "."
+            fx[i] = "."
     return fx
 
 def combine_decimals(fx):
