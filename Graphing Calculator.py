@@ -2,8 +2,9 @@ import turtle
 
 def can_be_number(item):
     numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    if item[0] in numbers:
-        return True
+    for i in item:
+        if i in numbers:
+            return True
     return False
 
 def combine_numbers(fx):
@@ -28,6 +29,23 @@ def combine_decimals(fx):
             fx[i-1] += fx.pop(i)
             fx[i-1] += fx.pop(i)
             i = 0
+        i += 1
+    return fx
+
+def convert_negatives(fx):
+    i = 0
+    while i < len(fx)-1:
+        if fx[i] == "-":
+            match i:
+                case 0:
+                    fx[i] = "-1"
+                    fx.insert(i+1, "*")
+                    i = 0
+                case _:
+                    if not can_be_number(fx[i-1]):
+                        fx[i] = "-1"
+                        fx.insert(i+1, "*")
+                        i = 0
         i += 1
     return fx
 
@@ -131,8 +149,10 @@ fx_input = list(input("function: "))
 combine_numbers(fx_input)
 convert_commas(fx_input)
 combine_decimals(fx_input)
+convert_negatives(fx_input)
 convert_mult_shorthand(fx_input)
 convert_to_numbers(fx_input)
+print(fx_input)
 points = []
 for i in range(201):
     x = (i-100)*0.1
