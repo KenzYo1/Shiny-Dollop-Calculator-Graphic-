@@ -5,9 +5,8 @@ def is_number(item):
     if isinstance(item, float):
         return True
     numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    for i in item:
-        if i in numbers:
-            return True
+    if item[-1] in numbers:
+        return True
     return False
 
 def is_operator(item):
@@ -81,41 +80,48 @@ def convert_operators(fx):
             case "l":
                 match fx[i+1]:
                     case "o":
-                        fx[i] = "log"
-                        fx.pop(i+1)
-                        fx.pop(i+1)
+                        if fx[i+2] == "g":
+                            fx[i] = "log"
+                            fx.pop(i+1)
+                            fx.pop(i+1)
                     case "n":
                         fx[i] = "ln"
                         fx.pop(i+1)
             case "s":
-                fx[i] = "sin"
-                fx.pop(i+1)
-                fx.pop(i+1)
+                if fx[i+1] == "i" and fx[i+2] == "n":
+                    fx[i] = "sin"
+                    fx.pop(i+1)
+                    fx.pop(i+1)
             case "c":
-                fx[i] = "cos"
-                fx.pop(i+1)
-                fx.pop(i+1)
+                if fx[i+1] == "o" and fx[i+2] == "s":
+                    fx[i] = "cos"
+                    fx.pop(i+1)
+                    fx.pop(i+1)
             case "t":
-                fx[i] = "tan"
-                fx.pop(i+1)
-                fx.pop(i+1)
+                if fx[i+1] == "a" and fx[i+2] == "n":
+                    fx[i] = "tan"
+                    fx.pop(i+1)
+                    fx.pop(i+1)
             case "a":
                 match fx[i+1]:
                     case "s":
-                        fx[i] = "asin"
-                        fx.pop(i+1)
-                        fx.pop(i+1)
-                        fx.pop(i+1)
+                        if fx[i+2] == "i" and fx[i+3] == "n":
+                            fx[i] = "asin"
+                            fx.pop(i+1)
+                            fx.pop(i+1)
+                            fx.pop(i+1)
                     case "c":
-                        fx[i] = "acos"
-                        fx.pop(i+1)
-                        fx.pop(i+1)
-                        fx.pop(i+1)
+                        if fx[i+2] == "o" and fx[i+3] == "s":
+                            fx[i] = "acos"
+                            fx.pop(i+1)
+                            fx.pop(i+1)
+                            fx.pop(i+1)
                     case "t":
-                        fx[i] = "atan"
-                        fx.pop(i+1)
-                        fx.pop(i+1)
-                        fx.pop(i+1)
+                        if fx[i+2] == "a" and fx[i+3] == "n":
+                            fx[i] = "atan"
+                            fx.pop(i+1)
+                            fx.pop(i+1)
+                            fx.pop(i+1)
         i += 1
     return fx
 
@@ -269,14 +275,17 @@ def calculate(fx):
         return None
 
 fx_input = list(input("function: "))
-combine_numbers(fx_input)
-convert_commas(fx_input)
-combine_decimals(fx_input)
-convert_negatives(fx_input)
-convert_to_floats(fx_input)
-convert_constants(fx_input)
-convert_operators(fx_input)
-convert_mult_shorthand(fx_input)
+try:
+    combine_numbers(fx_input)
+    convert_commas(fx_input)
+    combine_decimals(fx_input)
+    convert_negatives(fx_input)
+    convert_to_floats(fx_input)
+    convert_constants(fx_input)
+    convert_operators(fx_input)
+    convert_mult_shorthand(fx_input)
+except:
+    fx_input = None
 points = []
 for i in range(201):
     x = (i-100)*0.1
