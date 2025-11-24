@@ -1,6 +1,7 @@
 import math
 import turtle
 
+
 def is_number(item):
     if isinstance(item, float):
         return True
@@ -274,7 +275,7 @@ def calculate(fx):
     else:
         return None
 
-fx_input = list(input("function: "))
+fx_input = list(input("Input, f(x) =  "))
 try:
     combine_numbers(fx_input)
     convert_commas(fx_input)
@@ -295,4 +296,6 @@ for i in range(201):
         y = None
     points.append([x, y])
 for point in points:
-    print(point)
+    roundX = round(point[0], 5)
+    roundY = round(point[1], 5)
+    print([roundX,roundY])
