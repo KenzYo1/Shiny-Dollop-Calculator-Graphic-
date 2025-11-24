@@ -1,6 +1,39 @@
 import math
 import turtle
 
+def lengthen_array(array):
+    new_array = [None] * (len(array) * 2)
+    for i in range(len(array)):
+        new_array[i] = array[i]
+    return new_array
+
+def add_to_back(array, item):
+    if array[-1]:
+        array = lengthen_array(array)
+    for i in range(len(array)):
+        if not array[i]:
+            array[i] = item
+            return array
+
+def add_to(array, index, item):
+    if array[-1]:
+        array = lengthen_array(array)
+    for i in range(len(array)-index-1):
+        array[-i-index] = array[-i-index-1]
+    array[index] = item
+    return array
+
+def remove_at(array, index):
+    for i in range(len(array)-index-1):
+        array[i+index] = array[i+index+1]
+    array[-1] = None
+    return array
+
+def duplicate(array):
+    new_array = [None]*len(array)
+    for i in range(len(array)):
+        new_array[i] = array[i]
+    return new_array
 
 def is_number(item):
     if isinstance(item, float):
@@ -133,11 +166,13 @@ def convert_mult_shorthand(fx):
             fx.insert(i+1, "*")
         i += 1
 
+
 def insert_x(fx, x):
     for i in range(len(fx)):
         if fx[i] == "x":
             fx[i] = x
     return fx
+
 
 def check_brackets(fx):
     for i in range(len(fx)):
@@ -145,11 +180,13 @@ def check_brackets(fx):
             return True
     return False
 
+
 def check_operators(fx):
     for i in fx:
         if is_operator(i):
             return True
     return False
+
 
 def check_powers(fx):
     for i in range(len(fx)):
@@ -157,11 +194,13 @@ def check_powers(fx):
             return True
     return False
 
+
 def check_multiplication_division(fx):
     for i in range(len(fx)):
         if fx[i] == "*" or fx[i] == "/":
             return True
     return False
+
 
 def calculate(fx):
     i = 0
@@ -169,6 +208,7 @@ def calculate(fx):
     has_operators = check_operators(fx)
     has_powers = check_powers(fx)
     has_multiplication_division = check_multiplication_division(fx)
+
     while i < len(fx):
         if fx[i] == "(":
             fx.pop(i)
@@ -270,12 +310,15 @@ def calculate(fx):
             i = 0
         else:
             i += 1
+        print(fx)
     if len(fx) == 1:
+        print(fx)
         return fx[0]
+
     else:
         return None
 
-fx_input = list(input("Input, f(x) =  "))
+fx_input = list(input("function: "))
 try:
     combine_numbers(fx_input)
     convert_commas(fx_input)
@@ -287,15 +330,63 @@ try:
     convert_mult_shorthand(fx_input)
 except:
     fx_input = None
+
+x_range = [-100,100]
+x_step = 0.1
 points = []
-for i in range(201):
-    x = (i-100)*0.1
+for i in range(int((x_range[1]-x_range[0])/x_step)+1):
+    x = (i+x_range[0]/x_step)*x_step
     try:
         y = calculate(insert_x(fx_input.copy(), x))
     except:
         y = None
     points.append([x, y])
+
+turt = turtle.Turtle()
+turt.penup()
+turtle.tracer(0)
+def generate_grid():
+    graph_size_x = 1000
+    graph_size_y = 1000
+    grid_size = 10
+    turt.speed(0)
+    turt.penup()
+    turt.pencolor("light grey")
+    # generate grid
+    for i in range(-graph_size_y, graph_size_y + grid_size, grid_size):
+        turt.penup()
+        # verticals
+        turt.setpos(i, -graph_size_y)
+        turt.pendown()
+        turt.goto(i, graph_size_y)
+        turt.penup()
+
+        # horizontal
+        turt.setpos(-graph_size_x, i)
+        turt.pendown()
+        turt.goto(graph_size_x, i)
+        turt.penup()
+
+    turt.pencolor("black")
+    turt.setpos(-graph_size_x, 0)
+    turt.pendown()
+    turt.goto(graph_size_x, 0)
+    turt.penup()
+    turt.goto(0, graph_size_y)
+    turt.pendown()
+    turt.goto(0, -graph_size_y)
+    turt.penup()
+
+generate_grid()
+turt.pencolor("red")
+
 for point in points:
-    roundX = round(point[0], 5)
-    roundY = round(point[1], 5)
-    print([roundX,roundY])
+    if point[1] is None:
+        turt.penup()
+    else:
+        if -1000 < point[1] < 1000: # why? well it's off-screen
+            turt.goto(point[0], point[1])
+            turt.pendown()
+
+turtle.update()
+turtle.mainloop()
