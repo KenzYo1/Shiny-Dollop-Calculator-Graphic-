@@ -310,9 +310,7 @@ def calculate(fx):
             i = 0
         else:
             i += 1
-        print(fx)
     if len(fx) == 1:
-        print(fx)
         return fx[0]
 
     else:
@@ -331,8 +329,8 @@ try:
 except:
     fx_input = None
 
-x_range = [-100,100]
-x_step = 0.1
+x_range = [-500 ,500]
+x_step = 0.01
 points = []
 for i in range(int((x_range[1]-x_range[0])/x_step)+1):
     x = (i+x_range[0]/x_step)*x_step
@@ -342,51 +340,81 @@ for i in range(int((x_range[1]-x_range[0])/x_step)+1):
         y = None
     points.append([x, y])
 
-turt = turtle.Turtle()
-turt.penup()
+turt1 = turtle.Turtle()
+turt1.penup()
 turtle.tracer(0)
 def generate_grid():
     graph_size_x = 1000
     graph_size_y = 1000
     grid_size = 10
-    turt.speed(0)
-    turt.penup()
-    turt.pencolor("light grey")
+    turt1.speed(0)
+    turt1.penup()
+    turt1.pencolor("light grey")
     # generate grid
     for i in range(-graph_size_y, graph_size_y + grid_size, grid_size):
-        turt.penup()
+        turt1.penup()
         # verticals
-        turt.setpos(i, -graph_size_y)
-        turt.pendown()
-        turt.goto(i, graph_size_y)
-        turt.penup()
+        turt1.setpos(i, -graph_size_y)
+        turt1.pendown()
+        turt1.goto(i, graph_size_y)
+        turt1.penup()
 
         # horizontal
-        turt.setpos(-graph_size_x, i)
-        turt.pendown()
-        turt.goto(graph_size_x, i)
-        turt.penup()
+        turt1.setpos(-graph_size_x, i)
+        turt1.pendown()
+        turt1.goto(graph_size_x, i)
+        turt1.penup()
 
-    turt.pencolor("black")
-    turt.setpos(-graph_size_x, 0)
-    turt.pendown()
-    turt.goto(graph_size_x, 0)
-    turt.penup()
-    turt.goto(0, graph_size_y)
-    turt.pendown()
-    turt.goto(0, -graph_size_y)
-    turt.penup()
+    turt1.pencolor("black")
+    turt1.setpos(-graph_size_x, 0)
+    turt1.pendown()
+    turt1.goto(graph_size_x, 0)
+    turt1.penup()
+    turt1.goto(0, graph_size_y)
+    turt1.pendown()
+    turt1.goto(0, -graph_size_y)
+    turt1.penup()
 
 generate_grid()
-turt.pencolor("red")
 
-for point in points:
-    if point[1] is None:
-        turt.penup()
+turt2 = turtle.Turtle()
+turt2.pencolor("red")
+
+
+def gen_graph(points, zoom_amount):
+    turt2.penup()
+    for point in points:
+        if point[1] is None:
+            turt2.penup()
+        else:
+            if -200 < point[0] < 200: # why? well it's off-screen
+                turt2.goto(point[0] * zoom_amount, point[1] * zoom_amount)
+                turt2.pendown()
+
+
+zoom_amount = 40    # default zoom
+gen_graph(points, zoom_amount)
+
+
+def zoom(z):
+    global zoom_amount
+    if z > 0:
+        zoom_amount += 1
     else:
-        if -1000 < point[1] < 1000: # why? well it's off-screen
-            turt.goto(point[0], point[1])
-            turt.pendown()
+        zoom_amount -= 1
+    turt2.clear()
+    gen_graph(points, zoom_amount)
+    turt2.screen.update()
 
+def on_scroll(event):
+    if event.delta > 0:
+        zoom(1)
+    elif event.delta < 0 and zoom_amount > 10:  # max zoom out = 10
+        zoom(-1)
+
+
+
+canvas = turtle.getcanvas()
+canvas.bind("<MouseWheel>", on_scroll)
 turtle.update()
 turtle.mainloop()
