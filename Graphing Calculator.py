@@ -384,7 +384,7 @@ turt2.pencolor("red")
 def gen_graph(points, zoom_amount):
     turt2.penup()
     for point in points:
-        if point[1] is None:
+        if point[1] is None or (point[1] > 200 or point[1] < -200):    # this should fix tan(x)
             turt2.penup()
         else:
             if -200 < point[0] < 200: # why? well it's off-screen
