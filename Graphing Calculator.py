@@ -1,7 +1,7 @@
 import math
 import turtle
 
-def lengthen_array(array):
+def lengthen(array):
     new_array = [None] * (len(array) * 2)
     for i in range(len(array)):
         new_array[i] = array[i]
@@ -9,7 +9,7 @@ def lengthen_array(array):
 
 def add_to_back(array, item):
     if array[-1]:
-        array = lengthen_array(array)
+        array = lengthen(array)
     for i in range(len(array)):
         if not array[i]:
             array[i] = item
@@ -17,9 +17,10 @@ def add_to_back(array, item):
 
 def add_to(array, index, item):
     if array[-1]:
-        array = lengthen_array(array)
-    for i in range(len(array)-index-1):
-        array[-i-index] = array[-i-index-1]
+        array = lengthen(array)
+    for i in range(len(array)-index):
+        if i > 0:
+            array[-i] = array[-i-1]
     array[index] = item
     return array
 
@@ -82,7 +83,7 @@ def convert_negatives(fx):
                     fx[i] = "-1"
                     fx.insert(i+1, "*")
                 case _:
-                    if not is_number(fx[i-1]):
+                    if not is_number(fx[i-1]) and fx[i-1] != "x":
                         fx[i] = "-1"
                         fx.insert(i+1, "*")
         i += 1
@@ -161,11 +162,13 @@ def convert_operators(fx):
 
 def convert_mult_shorthand(fx):
     i = 0
-    while i < len(fx)-1:
-        if ((is_number(fx[i]) or fx[i] == "x") and (is_number(fx[i+1]) or fx[i+1] == "x" or fx[i+1] == "(")) or ((is_number(fx[i]) or fx[i] == "x" or fx[i] == ")") and (is_number(fx[i+1]) or fx[i+1] == "x" or is_operator(fx[i+1]))) or (fx[i] == ")" and fx[i+1] == "("):
+    while i < len(fx)-1 and fx[i] and fx[i+1]:
+        if ((is_number(fx[i]) or fx[i] == "x") and (is_number(fx[i+1]) or fx[i+1] == "x" or fx[i+1] == "("))\
+        or ((is_number(fx[i]) or fx[i] == "x" or fx[i] == ")") and (is_number(fx[i+1]) or fx[i+1] == "x" or is_operator(fx[i+1])))\
+        or (fx[i] == ")" and fx[i+1] == "("):
             fx.insert(i+1, "*")
         i += 1
-
+    return fx
 
 def insert_x(fx, x):
     for i in range(len(fx)):
@@ -310,22 +313,18 @@ def calculate(fx):
             i = 0
         else:
             i += 1
-    if len(fx) == 1:
-        return fx[0]
-
-    else:
-        return None
+    return fx[0]
 
 fx_input = list(input("function: "))
 try:
-    combine_numbers(fx_input)
-    convert_commas(fx_input)
-    combine_decimals(fx_input)
-    convert_negatives(fx_input)
-    convert_to_floats(fx_input)
-    convert_constants(fx_input)
-    convert_operators(fx_input)
-    convert_mult_shorthand(fx_input)
+    fx_input = combine_numbers(fx_input)
+    fx_input = convert_commas(fx_input)
+    fx_input = combine_decimals(fx_input)
+    fx_input = convert_negatives(fx_input)
+    fx_input = convert_to_floats(fx_input)
+    fx_input = convert_constants(fx_input)
+    fx_input = convert_operators(fx_input)
+    fx_input = convert_mult_shorthand(fx_input)
 except:
     fx_input = None
 
