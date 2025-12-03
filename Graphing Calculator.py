@@ -8,15 +8,18 @@ def lengthen(array):
     return new_array
 
 def add_to_back(array, item):
+    if len(array) == 0:
+        array = [None]
     if array == [None]:
         array[0] = item
         return array
-    elif array[-1]:
+    elif array[-1] != None:
         array = lengthen(array)
     for i in range(len(array)):
-        if array[-i-1]:
+        if array[-i-1] != None:
             array[-i] = item
             return array
+    return array
 
 def add_to(array, index, item):
     if array[-1]:
@@ -55,7 +58,7 @@ def is_operator(item):
 
 def combine_numbers(fx):
     i = 0
-    while i < len(fx)-1:
+    while i < len(fx)-1 and fx[i+1] != None:
         if is_number(fx[i]) and is_number(fx[i+1]):
             fx[i] += fx[i+1]
             remove_at(fx, i+1)
@@ -97,6 +100,8 @@ def convert_negatives(fx):
 
 def convert_to_floats(fx):
     for i in range(len(fx)):
+        if not fx[i]:
+            return fx
         if is_number(fx[i]):
             fx[i] = float(fx[i])
     return fx
@@ -334,15 +339,14 @@ try:
     fx_input = convert_operators(fx_input)
     fx_input = convert_mult_shorthand(fx_input)
 except:
-    fx_input = None
-
+    fx_input = [None]
 x_range = [-500 ,500]
 x_step = 0.01
 points = [None]
 for i in range(int((x_range[1]-x_range[0])/x_step)+1):
     x = (i+x_range[0]/x_step)*x_step
     try:
-        y = calculate(insert_x(fx_input.copy(), x))
+        y = calculate(insert_x(duplicate(fx_input), x))
     except:
         y = None
     if i >= len(points):
