@@ -87,10 +87,10 @@ def riemann_sum(n, low_lim, up_lim):
     up_lim *= 100
     for i in range(1, 1 + n):
         x_cor = start_point + low_lim + (int(d_x * 100/zoom_amount) * i)
-        print(points[x_cor])
-        turt3.penup()
-        turt3.goto(points[x_cor][0] * zoom_amount, points[x_cor][1] * zoom_amount)
-        draw_squares(d_x, points[x_cor][1])
+        if points[x_cor][1] is not None:
+            turt3.penup()
+            turt3.goto(points[x_cor][0] * zoom_amount, points[x_cor][1] * zoom_amount)
+            draw_squares(d_x, points[x_cor][1])
 
 def zoom(z):
     global zoom_amount
