@@ -42,6 +42,7 @@ def duplicate(array):
     return new_array
 
 def is_number(item):
+    # mengecek apakah item sebuah number
     if isinstance(item, float):
         return True
     numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
@@ -50,12 +51,14 @@ def is_number(item):
     return False
 
 def is_operator(item):
+    # mengecek apakah item sebuah operator
     operators = ["log", "ln", "sin", "cos", "tan", "asin", "acos", "atan"]
     if item in operators:
         return True
     return False
 
 def combine_numbers(fx):
+    # menggabungkan number dari input
     i = 0
     while i < len(fx)-1 and fx[i+1] != None:
         if is_number(fx[i]) and is_number(fx[i+1]):
@@ -66,12 +69,14 @@ def combine_numbers(fx):
     return fx
 
 def convert_commas(fx):
+    # mengubah comma dari "," jadi "."
     for i in range(len(fx)):
         if fx[i] == ",":
             fx[i] = "."
     return fx
 
 def combine_decimals(fx):
+    # mengconvert desimal
     i = 0
     while i < len(fx)-1:
         if fx[i] == ".":
@@ -253,76 +258,83 @@ def calculate(fx):
             has_powers = check_powers(fx)
             has_multiplication_division = check_multiplication_division(fx)
             i = 0
-        elif fx[i] == "log" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.log10(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "ln" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.log(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "sin" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.sin(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "cos" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.cos(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "tan" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.tan(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "asin" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.asin(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "acos" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.acos(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "atan" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.atan(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
+        if not is_operator(fx[i+1]) and not has_brackets:
+            if fx[i] == "log" :
+                fx[i] = math.log10(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "ln" :
+                fx[i] = math.log(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "sin" :
+                fx[i] = math.sin(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "cos" :
+                fx[i] = math.cos(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "tan" :
+                fx[i] = math.tan(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "asin" :
+                fx[i] = math.asin(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "acos" :
+                fx[i] = math.acos(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "atan" :
+                fx[i] = math.atan(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
         elif fx[i] == "^" and not has_brackets and not has_operators:
             fx[i-1] = fx[i-1] ** fx[i+1]
             if isinstance(fx[i-1], complex):
-                return None
+                return None 
             remove_at(fx, i)
             remove_at(fx, i)
             has_powers = check_powers(fx)
             i = 0
-        elif fx[i] == "*" and not has_brackets and not has_operators and not has_powers:
-            fx[i-1] = fx[i-1] * fx[i+1]
-            remove_at(fx, i)
-            remove_at(fx, i)
-            has_multiplication_division = check_multiplication_division(fx)
-            i = 0
-        elif fx[i] == "/" and not has_brackets and not has_operators and not has_powers:
-            fx[i-1] = fx[i-1] / fx[i+1]
-            remove_at(fx, i)
-            remove_at(fx, i)
-            has_multiplication_division = check_multiplication_division(fx)
-            i = 0
-        elif fx[i] == "+" and not has_brackets and not has_operators and not has_powers and not has_multiplication_division:
-            fx[i-1] = fx[i-1] + fx[i+1]
-            remove_at(fx, i)
-            remove_at(fx, i)
-            i = 0
-        elif fx[i] == "-" and not has_brackets and not has_operators and not has_powers and not has_multiplication_division:
-            fx[i-1] = fx[i-1] - fx[i+1]
-            remove_at(fx, i)
-            remove_at(fx, i)
-            i = 0
+        if not (has_brackets or has_operators or has_powers):
+            if fx[i] == "*":
+                fx[i-1] = fx[i-1] * fx[i+1]
+                remove_at(fx, i)
+                remove_at(fx, i)
+                has_multiplication_division = check_multiplication_division(fx)
+                i = 0
+            elif fx[i] == "/":
+                fx[i-1] = fx[i-1] / fx[i+1]
+                remove_at(fx, i)
+                remove_at(fx, i)
+                has_multiplication_division = check_multiplication_division(fx)
+                i = 0
+            elif not has_multiplication_division:
+                if fx[i] == "+":
+                    fx[i-1] = fx[i-1] + fx[i+1]
+                    remove_at(fx, i)
+                    remove_at(fx, i)
+                    i = 0
+                elif fx[i] == "-":
+                    fx[i-1] = fx[i-1] - fx[i+1]
+                    remove_at(fx, i)
+                    remove_at(fx, i)
+                    i = 0
+                else:
+                    i += 1
+            else:
+                i += 1
         else:
             i += 1
     return fx[0]

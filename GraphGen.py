@@ -81,7 +81,7 @@ def gen_graph(points, zoom_amount):
             turt2.penup()
         else:
             if -200 < point[0] < 200: # why? well it's off-screen
-                turt2.goto(point[0] * zoom_amount, point[1] * zoom_amount)
+                turt2.goto((point[0]-camera[0]) * zoom_amount, (point[1]-camera[0]) * zoom_amount)
                 turt2.pendown()
 
 
@@ -128,7 +128,7 @@ def zoom(z):
         zoom_amount -= 1
     turt_n.clear()
     turt2.clear()
-    gen_graph(points, zoom_amount)
+    gen_graph(points, zoom_amount, camera)
     draw_scale_graph()
     turt2.screen.update()
     turt_n.screen.update()
@@ -140,6 +140,17 @@ def on_scroll(event):
     elif event.delta < 0 and zoom_amount > 10:  # max zoom out = 10
         zoom(-1)
 
+def on_left(event):
+    camera[0] -= 100
+
+def on_right(event):
+    camera[0] += 100
+
+def on_up(event):
+    camera[1] += 100
+
+def on_down(event):
+    camera[1] -= 100
 
 
 def mouse_pos(x, y):
@@ -165,6 +176,11 @@ def starting_graph():
 
 canvas = turtle.getcanvas()
 canvas.bind("<MouseWheel>", on_scroll)
+canvas.bind("<Left>", on_left)
+canvas.bind("<Right>", on_right)
+canvas.bind("<Up>", on_up)
+canvas.bind("<Down>", on_down)
+canvas.focus_set()
 turtle.update()
 
 
