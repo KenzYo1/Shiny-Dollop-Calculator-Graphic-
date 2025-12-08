@@ -1,7 +1,7 @@
 from FuncParser import points
 import turtle
 
-
+camera = [0,0]
 turt1 = turtle.Turtle()
 turt_n = turtle.Turtle()
 turt1.penup()
@@ -73,7 +73,8 @@ def draw_scale_graph():
     for i in range(-graph_size_y, graph_size_y + grid_size, grid_size):
         draw_scale(grid_size, i, zoom_amount)
 
-def gen_graph(points, zoom_amount):
+def gen_graph(points, zoom_amount, camera):
+    print(camera)
     turt2.penup()
     for point in points:
         if point is None:
@@ -82,7 +83,7 @@ def gen_graph(points, zoom_amount):
             turt2.penup()
         else:
             if -200 < point[0] < 200: # why? well it's off-screen
-                turt2.goto(point[0] * zoom_amount, point[1] * zoom_amount)
+                turt2.goto((point[0]-camera[0]) * zoom_amount, (point[1]-camera[0]) * zoom_amount)
                 turt2.pendown()
 
 
@@ -108,7 +109,6 @@ for i in range(len(points)):
         real_len += 1
 
 start_point = int(real_len / 2)
-print(start_point)
 def riemann_sum(n, low_lim, up_lim):
     d_x = (up_lim-low_lim) / n
     d_x *= zoom_amount
@@ -131,7 +131,7 @@ def zoom(z):
         zoom_amount -= 1
     turt_n.clear()
     turt2.clear()
-    gen_graph(points, zoom_amount)
+    gen_graph(points, zoom_amount, camera)
     draw_scale_graph()
     turt2.screen.update()
     turt_n.screen.update()
@@ -143,6 +143,17 @@ def on_scroll(event):
     elif event.delta < 0 and zoom_amount > 10:  # max zoom out = 10
         zoom(-1)
 
+def on_left(event):
+    camera[0] -= 100
+
+def on_right(event):
+    camera[0] += 100
+
+def on_up(event):
+    camera[1] += 100
+
+def on_down(event):
+    camera[1] -= 100
 
 # hide cursor
 turt1.ht()
@@ -152,11 +163,16 @@ turt_n.ht()
 turtle.delay(0)
 draw_scale_graph()
 generate_grid()
-gen_graph(points, zoom_amount)
+gen_graph(points, zoom_amount, camera)
 
 
 canvas = turtle.getcanvas()
 canvas.bind("<MouseWheel>", on_scroll)
+canvas.bind("<Left>", on_left)
+canvas.bind("<Right>", on_right)
+canvas.bind("<Up>", on_up)
+canvas.bind("<Down>", on_down)
+canvas.focus_set()
 turtle.update()
 turtle.mainloop()
 
