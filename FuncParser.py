@@ -1,6 +1,5 @@
 import math
 
-
 def lengthen(array):
     new_array = [None] * (len(array) * 2)
     for i in range(len(array)):
@@ -328,27 +327,28 @@ def calculate(fx):
             i += 1
     return fx[0]
 
-fx_input = list(input("function: "))
-try:
-    fx_input = combine_numbers(fx_input)
-    fx_input = convert_commas(fx_input)
-    fx_input = combine_decimals(fx_input)
-    fx_input = convert_negatives(fx_input)
-    fx_input = convert_to_floats(fx_input)
-    fx_input = convert_constants(fx_input)
-    fx_input = convert_operators(fx_input)
-    fx_input = convert_mult_shorthand(fx_input)
-except:
-    fx_input = [None]
-x_range = [-500 ,500]
-x_step = 0.01
-points = [None]
-for i in range(int((x_range[1]-x_range[0])/x_step)+1):
-    x = (i+x_range[0]/x_step)*x_step
+def parse(fx_input):
     try:
-        y = calculate(insert_x(duplicate(fx_input), x))
+        fx_input = combine_numbers(fx_input)
+        fx_input = convert_commas(fx_input)
+        fx_input = combine_decimals(fx_input)
+        fx_input = convert_negatives(fx_input)
+        fx_input = convert_to_floats(fx_input)
+        fx_input = convert_constants(fx_input)
+        fx_input = convert_operators(fx_input)
+        fx_input = convert_mult_shorthand(fx_input)
     except:
-        y = None
-    if i >= len(points):
-        points = lengthen(points)
-    points[i] = [x, y]
+        fx_input = [None]
+    x_range = [-500 ,500]
+    x_step = 0.01
+    points = [None]
+    for i in range(int((x_range[1]-x_range[0])/x_step)+1):
+        x = (i+x_range[0]/x_step)*x_step
+        try:
+            y = calculate(insert_x(duplicate(fx_input), x))
+        except:
+            y = None
+        if i >= len(points):
+            points = lengthen(points)
+        points[i] = [x, y]
+    return points

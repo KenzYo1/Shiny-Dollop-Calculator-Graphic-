@@ -1,17 +1,16 @@
-from FuncParser import points
 import turtle
 
-
 turt1 = turtle.Turtle()
+turt2 = turtle.Turtle()
+turt3 = turtle.Turtle()
+turt_m = turtle.Turtle()
 turt_n = turtle.Turtle()
-turt1.penup()
-turt_n.penup()
-turt_n.pencolor("black")
 turtle.tracer(0, 0)
-
-
-def draw_scale(grid_size, i, zoom_amount):
-    unit = (i/zoom_amount)  # /10 to make up for grid size = 10
+points = []
+def draw_scale(i, zoom_amount):
+    turt_n.penup()
+    turt_n.pencolor("black")
+    unit = (i/zoom_amount)
     str_unit = f"{unit:.2f}"
     if i % 50 == 0:  # every 5 grid
         if i != 0:
@@ -66,14 +65,14 @@ def generate_grid():
     turt1.goto(0, -graph_size_y)
     turt1.penup()
 
-turt2 = turtle.Turtle()
-turt2.pencolor("red")
 
 def draw_scale_graph():
     for i in range(-graph_size_y, graph_size_y + grid_size, grid_size):
-        draw_scale(grid_size, i, zoom_amount)
+        draw_scale(i, zoom_amount)
+
 
 def gen_graph(points, zoom_amount):
+    turt2.pencolor("red")
     turt2.penup()
     for point in points:
         if point is None:
@@ -86,42 +85,40 @@ def gen_graph(points, zoom_amount):
                 turt2.pendown()
 
 
-zoom_amount = 40 #40    # default zoom
-turt3 = turtle.Turtle()
-turt3.pencolor("blue")
+zoom_amount = 40  # default zoom
 
-
-def draw_squares(d_x, y):
+def draw_squares(d_x, x, y):
+    turt3.pencolor("blue")
     turt3.penup()
-    for i in range(1, 5):
-        turt3.pendown()
-        if i > 0:
-            turt3.right(90)
-        if i % 2 == 0:
-            turt3.forward(d_x)
-        elif i % 2 != 0:
-            turt3.forward(y * zoom_amount)
+    turt3.goto(x, 0)
+    turt3.pendown()
+    turt3.goto(x-d_x, 0)
+    turt3.goto(x-d_x, y)
+    turt3.goto(x, y)
+    turt3.goto(x, 0)
 
-real_len = 0
-for i in range(len(points)):
-    if points[i] is not None:
-        real_len += 1
-
-start_point = int(real_len / 2)
-print(start_point)
 def riemann_sum(n, low_lim, up_lim):
+    # Calculate the real length
+    real_len = 0
+    for i in range(len(points)):
+        if points[i] is not None:
+            real_len += 1
+    start_point = int(real_len / 2)
+    area = 0
     d_x = (up_lim-low_lim) / n
+    d_x_raw = (up_lim-low_lim) / n  # for area calculation, more accurate
     d_x *= zoom_amount
-    d_x = int(d_x)
     low_lim *= 100  # scaling from the 0.01 steps
     up_lim *= 100
-    for i in range(1, 1 + n):
-        x_cor = start_point + low_lim + (int(d_x * 100/zoom_amount) * i)
-        if points[x_cor][1] is not None:
+    for i in range(1, 1 + 2*n):  # the 2*n serves to increase accuracy
+        x_cor = int(start_point + low_lim + ((d_x * 100/zoom_amount) * i))
+        if (points[x_cor] is not None and points[x_cor][1] is not None
+                and points[x_cor][0] <= up_lim/100):
             turt3.penup()
             turt3.goto(points[x_cor][0] * zoom_amount, points[x_cor][1] * zoom_amount)
-            draw_squares(d_x, points[x_cor][1])
-
+            draw_squares(d_x, points[x_cor][0] * zoom_amount, points[x_cor][1] * zoom_amount)
+            area += d_x_raw * (points[x_cor][1])
+    return area
 
 def zoom(z):
     global zoom_amount
@@ -144,20 +141,30 @@ def on_scroll(event):
         zoom(-1)
 
 
+
+def mouse_pos(x, y):
+    turt_m.goto(0,0)
+    turt_m.screen.clear()
+    turt_m.circle(radius=100)
+    turt_m.fillcolor("black")
+    turt_m.screen.update()
+
+
 # hide cursor
 turt1.ht()
 turt2.ht()
 turt3.ht()
+turt_m.ht()
 turt_n.ht()
-turtle.delay(0)
-draw_scale_graph()
-generate_grid()
-gen_graph(points, zoom_amount)
+
+
+def starting_graph():
+    generate_grid()
+    draw_scale_graph()
 
 
 canvas = turtle.getcanvas()
 canvas.bind("<MouseWheel>", on_scroll)
 turtle.update()
-turtle.mainloop()
 
 
