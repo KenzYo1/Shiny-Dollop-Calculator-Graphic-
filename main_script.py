@@ -35,7 +35,7 @@ def gen_riemann(n, l_lim, u_lim, area_label):
     area = GraphGen.riemann_sum(n, l_lim, u_lim)
     if u_lim < l_lim:
         area *= -1
-    area_label.config(text=f"Area = {area:.4f}")
+    area_label.config(text=f"Hasil = {area:.4f}")
     GraphGen.turt3.screen.update()
 
 # Riemann Entries
@@ -60,7 +60,7 @@ def riemann_popup():
     r_s_popup_y = main_frame.winfo_y() + r_sum_btn.winfo_y()
     r_s_popup.geometry(f"{190}x{200}+{r_s_popup_x+125}+{r_s_popup_y-50}")
     # n
-    n_txt = tkinter.Label(input_frame, text="n (amout of subdivisions)",
+    n_txt = tkinter.Label(input_frame, text="n (amount of subdivisions)",
                           font="Arial, 12")
     n_entry = tkinter.Entry(input_frame, font="Arial, 12")
     n_txt.grid(row=1, column=0)
@@ -85,7 +85,7 @@ def riemann_popup():
                                "Generate!", command=lambda: gen_riemann(n_entry.get(),
                                 low_lim_entry.get(), upper_lim_entry.get(), area_label))
     r_gen_btn.grid(row=7, padx=50)
-    area_label = tkinter.Label(input_frame, font="Arial, 12", text="Area = 0")
+    area_label = tkinter.Label(input_frame, font="Arial, 12", text="Hasil = 0")
     area_label.grid(row=8, column=0, padx=50)
 
 def run():
