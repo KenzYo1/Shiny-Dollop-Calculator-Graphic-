@@ -7,35 +7,45 @@ turt_m = turtle.Turtle()
 turt_n = turtle.Turtle()
 turtle.tracer(0, 0)
 points = []
+camera = [0,0]
 def draw_scale(i, zoom_amount):
     turt_n.penup()
     turt_n.pencolor("black")
-    unit = (i/zoom_amount)
+    unit = ((i)/zoom_amount)
     str_unit = f"{unit:.2f}"
     if i % 50 == 0:  # every 5 grid
-        if i != 0:
-            # y
-            turt_n.pencolor("black")  # horizontal lines for each numbered grid
-            turt_n.goto(0, i)
-            turt_n.write(str_unit, align="right", font=("Courier", 7, "bold"))
-            turt_n.pendown()
-            turt_n.goto(-5, i)
-            turt_n.penup()
-            # x
-            turt_n.goto(i, -15)
-            turt_n.write(str_unit, align="right", font=("Courier", 7, "bold"))
-            turt_n.goto(i, 0)
-            turt_n.pendown()
-            turt_n.goto(i, -5)
-            turt_n.penup()
-        if i == 0:
-            turt_n.goto(-5, -15)
-            turt_n.write(0, align="center", font=("Courier", 7, "bold"))
+        # if i != 0:
+        # y
+        turt_n.pencolor("black")  # horizontal lines for each numbered grid
+        turt_n.goto(-camera[0]*zoom_amount, i)
+        turt_n.write(f"{(float(str_unit)+camera[1]):.2f}", align="right", font=("Courier", 7, "bold"))
+        turt_n.pendown()
+        turt_n.goto((-5/40-camera[0])*zoom_amount, i)
+        turt_n.penup()
+        # x
+        turt_n.goto(i, (-15/40-camera[1])*zoom_amount)
+        turt_n.write(f"{(float(str_unit)+camera[0]):.2f}", align="right", font=("Courier", 7, "bold"))
+        turt_n.goto(i, -camera[1]*zoom_amount)
+        turt_n.pendown()
+        turt_n.goto(i, (-5/40-camera[1])*zoom_amount)
+        turt_n.penup()
+        # if i == 0:
+        #     turt_n.goto((-5/40-camera[0])*zoom_amount, (-15/40-camera[1])*zoom_amount)
+        #     turt_n.write(0, align="center", font=("Courier", 7, "bold"))
+        #     turt_n.goto(i, -camera[1]*zoom_amount)
+        #     turt_n.pendown()
+        #     turt_n.goto(i, (-5/40-camera[1])*zoom_amount)
+        #     turt_n.penup()
+        #     turt_n.goto(-camera[0]*zoom_amount, i)
+        #     turt_n.pendown()
+        #     turt_n.goto((-5/40-camera[0])*zoom_amount, i)
+        #     turt_n.penup()
+
 
 
 graph_size_x = 1000
 graph_size_y = 1000
-grid_size = 10
+grid_size = 1
 
 def generate_grid():
     turt1.penup()
@@ -44,25 +54,25 @@ def generate_grid():
     for i in range(-graph_size_y, graph_size_y + grid_size, grid_size):
         turt1.penup()
         # verticals
-        turt1.setpos(i, -graph_size_y)
+        turt1.setpos((i-camera[0])*zoom_amount, -graph_size_y*zoom_amount)
         turt1.pendown()
-        turt1.goto(i, graph_size_y)
+        turt1.goto((i-camera[0])*zoom_amount, graph_size_y*zoom_amount)
         turt1.penup()
 
         # horizontal
-        turt1.setpos(-graph_size_x, i)
+        turt1.setpos(-graph_size_x*zoom_amount, (i-camera[1])*zoom_amount)
         turt1.pendown()
-        turt1.goto(graph_size_x, i)
+        turt1.goto(graph_size_x*zoom_amount, (i-camera[1])*zoom_amount)
         turt1.penup()
 
     turt1.pencolor("black")
-    turt1.setpos(-graph_size_x, 0)
+    turt1.setpos(-graph_size_x*zoom_amount, -camera[1]*zoom_amount)
     turt1.pendown()
-    turt1.goto(graph_size_x, 0)
+    turt1.goto(graph_size_x*zoom_amount, -camera[1]*zoom_amount)
     turt1.penup()
-    turt1.goto(0, graph_size_y)
+    turt1.goto(-camera[0]*zoom_amount, graph_size_y*zoom_amount)
     turt1.pendown()
-    turt1.goto(0, -graph_size_y)
+    turt1.goto(-camera[0]*zoom_amount, -graph_size_y*zoom_amount)
     turt1.penup()
 
 
@@ -81,7 +91,7 @@ def gen_graph(points, zoom_amount):
             turt2.penup()
         else:
             if -200 < point[0] < 200: # why? well it's off-screen
-                turt2.goto(point[0] * zoom_amount, point[1] * zoom_amount)
+                turt2.goto((point[0]-camera[0]) * zoom_amount, (point[1]-camera[1]) * zoom_amount)
                 turt2.pendown()
 
 
@@ -126,12 +136,12 @@ def zoom(z):
         zoom_amount += 1
     else:
         zoom_amount -= 1
-    turt_n.clear()
+    turt1.clear()
     turt2.clear()
+    turt_n.clear()
+    generate_grid()
     gen_graph(points, zoom_amount)
     draw_scale_graph()
-    turt2.screen.update()
-    turt_n.screen.update()
 
 
 def on_scroll(event):
@@ -140,7 +150,41 @@ def on_scroll(event):
     elif event.delta < 0 and zoom_amount > 10:  # max zoom out = 10
         zoom(-1)
 
+def on_up():
+    camera[1] += 1.25*40/zoom_amount
+    turt1.clear()
+    turt2.clear()
+    turt_n.clear()
+    generate_grid()
+    gen_graph(points, zoom_amount)
+    draw_scale_graph()
 
+def on_down():
+    camera[1] -= 1.25*40/zoom_amount
+    turt1.clear()
+    turt2.clear()
+    turt_n.clear()
+    generate_grid()
+    gen_graph(points, zoom_amount)
+    draw_scale_graph()
+
+def on_left():
+    camera[0] -= 1.25*40/zoom_amount
+    turt1.clear()
+    turt2.clear()
+    turt_n.clear()
+    generate_grid()
+    gen_graph(points, zoom_amount)
+    draw_scale_graph()
+
+def on_right():
+    camera[0] += 1.25*40/zoom_amount
+    turt1.clear()
+    turt2.clear()
+    turt_n.clear()
+    generate_grid()
+    gen_graph(points, zoom_amount)
+    draw_scale_graph()
 
 def mouse_pos(x, y):
     turt_m.goto(0,0)
@@ -164,7 +208,13 @@ def starting_graph():
 
 
 canvas = turtle.getcanvas()
+screen = turtle.TurtleScreen(canvas)
 canvas.bind("<MouseWheel>", on_scroll)
+screen.onkey(on_up, "Up")
+screen.onkey(on_down, "Down")
+screen.onkey(on_left, "Left")
+screen.onkey(on_right, "Right")
+screen.listen()
 turtle.update()
 
 
