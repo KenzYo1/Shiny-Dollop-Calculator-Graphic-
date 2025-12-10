@@ -100,14 +100,21 @@ zoom_amount = 40  # default zoom
 def draw_squares(d_x, x, y):
     turt3.pencolor("blue")
     turt3.penup()
-    turt3.goto(x, 0)
+    turt3.goto(x, -camera[1] * zoom_amount)
     turt3.pendown()
-    turt3.goto(x-d_x, 0)
+    turt3.goto(x-d_x, -camera[1] * zoom_amount)
     turt3.goto(x-d_x, y)
     turt3.goto(x, y)
-    turt3.goto(x, 0)
+    turt3.goto(x, -camera[1] * zoom_amount)
+
+riemann_called = False
+# placeholder n, low_lim, up_lim:
+pl_n = 0
+pl_ll = 0
+pl_ul = 0
 
 def riemann_sum(n, low_lim, up_lim):
+    global riemann_called
     # Calculate the real length
     real_len = 0
     for i in range(len(points)):
@@ -125,10 +132,26 @@ def riemann_sum(n, low_lim, up_lim):
         if (points[x_cor] is not None and points[x_cor][1] is not None
                 and points[x_cor][0] <= up_lim/100):
             turt3.penup()
-            turt3.goto(points[x_cor][0] * zoom_amount, points[x_cor][1] * zoom_amount)
-            draw_squares(d_x, points[x_cor][0] * zoom_amount, points[x_cor][1] * zoom_amount)
+            turt3.goto((points[x_cor][0] - camera[0]) * zoom_amount,
+                        (points[x_cor][1] - camera[1]) * zoom_amount)
+
+            draw_squares(d_x, (points[x_cor][0] - camera[0]) * zoom_amount,
+                         (points[x_cor][1] - camera[1]) * zoom_amount)
             area += d_x_raw * (points[x_cor][1])
     return area
+
+def redraw():
+    global riemann_called, pl_n, pl_ll, pl_ul
+    turt1.clear()
+    turt2.clear()
+    turt3.clear()
+    turt_n.clear()
+    generate_grid()
+    gen_graph(points, zoom_amount)
+    draw_scale_graph()
+    if riemann_called:
+        riemann_sum(pl_n, pl_ll, pl_ul)
+    turtle.update()
 
 def zoom(z):
     global zoom_amount
@@ -136,12 +159,7 @@ def zoom(z):
         zoom_amount += 1
     else:
         zoom_amount -= 1
-    turt1.clear()
-    turt2.clear()
-    turt_n.clear()
-    generate_grid()
-    gen_graph(points, zoom_amount)
-    draw_scale_graph()
+    redraw()
 
 
 def on_scroll(event):
@@ -150,49 +168,22 @@ def on_scroll(event):
     elif event.delta < 0 and zoom_amount > 10:  # max zoom out = 10
         zoom(-1)
 
+
 def on_up():
     camera[1] += 1.25*40/zoom_amount
-    turt1.clear()
-    turt2.clear()
-    turt_n.clear()
-    generate_grid()
-    gen_graph(points, zoom_amount)
-    draw_scale_graph()
+    redraw()
 
 def on_down():
     camera[1] -= 1.25*40/zoom_amount
-    turt1.clear()
-    turt2.clear()
-    turt_n.clear()
-    generate_grid()
-    gen_graph(points, zoom_amount)
-    draw_scale_graph()
+    redraw()
 
 def on_left():
     camera[0] -= 1.25*40/zoom_amount
-    turt1.clear()
-    turt2.clear()
-    turt_n.clear()
-    generate_grid()
-    gen_graph(points, zoom_amount)
-    draw_scale_graph()
+    redraw()
 
 def on_right():
     camera[0] += 1.25*40/zoom_amount
-    turt1.clear()
-    turt2.clear()
-    turt_n.clear()
-    generate_grid()
-    gen_graph(points, zoom_amount)
-    draw_scale_graph()
-
-def mouse_pos(x, y):
-    turt_m.goto(0,0)
-    turt_m.screen.clear()
-    turt_m.circle(radius=100)
-    turt_m.fillcolor("black")
-    turt_m.screen.update()
-
+    redraw()
 
 # hide cursor
 turt1.ht()
@@ -216,5 +207,3 @@ screen.onkey(on_left, "Left")
 screen.onkey(on_right, "Right")
 screen.listen()
 turtle.update()
-
-

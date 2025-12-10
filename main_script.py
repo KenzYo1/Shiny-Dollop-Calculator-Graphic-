@@ -53,10 +53,14 @@ def update_options():
 
 
 def gen_riemann(n, l_lim, u_lim, area_label):
+    GraphGen.turt3.clear()
+    GraphGen.riemann_called = True
     n = int(n)
     l_lim = float(l_lim)
     u_lim = float(u_lim)
-    GraphGen.turt3.clear()
+    GraphGen.pl_n = n
+    GraphGen.pl_ll = l_lim
+    GraphGen.pl_ul = u_lim
     area = GraphGen.riemann_sum(n, l_lim, u_lim)
     if u_lim < l_lim:
         area *= -1
@@ -120,7 +124,7 @@ def run():
     OPTIONS = history_parser.read_from()
     GraphGen.turt2.clear()
     GraphGen.turt3.clear()
-
+    GraphGen.riemann_called = False
     fx = FuncParser.parse(list(fx_input.get()))
     GraphGen.points = fx
     GraphGen.gen_graph(fx, GraphGen.zoom_amount)

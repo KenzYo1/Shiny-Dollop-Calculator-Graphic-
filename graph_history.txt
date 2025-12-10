@@ -1,8 +1,10 @@
-1/x
+3x
 2x
-23
-sinx
-cosx
 3
-sinx
-cosx
+2x
+2
+3
+3
+2x
+3
+2x
