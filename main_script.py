@@ -125,6 +125,7 @@ def run():
     GraphGen.points = fx
     GraphGen.gen_graph(fx, GraphGen.zoom_amount)
     GraphGen.turt2.screen.update()
+    GraphGen.screen.listen()
     if len(fx) > 1000:  # length of the whole (x, y) cords should be more than 1k
         for l in range(10):
             if fx[l][1] is not None:
