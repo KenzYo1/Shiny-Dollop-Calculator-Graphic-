@@ -2,11 +2,11 @@ import tkinter
 import turtle
 import GraphGen
 import FuncParser
-import json_parser
+import history_parser
 
 canvas = turtle.getcanvas()
 root = canvas.master
-OPTIONS = ["aaa", "AAAA"]
+OPTIONS = history_parser.read_from()
 
 # Main stuff
 title = tkinter.Label(root, text="Shiny Dollop Graphic Calculator", font="Arial, 16")
@@ -20,11 +20,36 @@ r_sum_btn = tkinter.Button(main_frame, text="Riemann Sum", font="Arial, 12",
                            width=15)
 r_sum_btn.grid(row=1, column=0, sticky="W")
 
-# History
-history_btn = tkinter.Button(main_frame, text="History", font="Arial, 12")
-
-fx_input = tkinter.Entry(main_frame, font="Arial, 12")
+e_txt = tkinter.StringVar()
+fx_input = tkinter.Entry(main_frame, font="Arial, 12", textvariable=e_txt)
 fx_input.grid(row=0, column=2)
+
+
+# History
+def callback(selection):  # command for the options
+    global e_txt
+    e_txt.set("")
+    e_txt.set(selection)
+
+var = tkinter.StringVar()
+var.set("History")
+
+fx_options = tkinter.OptionMenu(main_frame, var, *OPTIONS, command=callback)
+fx_options.grid(row=0, column=3)
+
+def handle_option_select(v):  # adds the callback command to every options
+    var.set(v)
+    callback(v)
+
+def update_options():
+    global fx_options, OPTIONS
+    OPTIONS = history_parser.read_from()
+    fx_options['menu'].delete(0, tkinter.END)
+    for item in OPTIONS:
+        fx_options['menu'].add_command(
+            label=item,
+            command=lambda v=item: handle_option_select(v)
+        )
 
 
 def gen_riemann(n, l_lim, u_lim, area_label):
@@ -37,6 +62,7 @@ def gen_riemann(n, l_lim, u_lim, area_label):
         area *= -1
     area_label.config(text=f"Hasil = {area:.4f}")
     GraphGen.turt3.screen.update()
+
 
 # Riemann Entries
 popped_up = False
@@ -89,14 +115,23 @@ def riemann_popup():
     area_label.grid(row=8, column=0, padx=50)
 
 def run():
+    global OPTIONS
+    check = False
+    OPTIONS = history_parser.read_from()
     GraphGen.turt2.clear()
     GraphGen.turt3.clear()
+
     fx = FuncParser.parse(list(fx_input.get()))
     GraphGen.points = fx
     GraphGen.gen_graph(fx, GraphGen.zoom_amount)
     GraphGen.turt2.screen.update()
     if len(fx) > 1000:  # length of the whole (x, y) cords should be more than 1k
-        json_parser.abc(fx_input.get())
+        for l in range(10):
+            if fx[l][1] is not None:
+                check = True    # if within 10 y values there is a non-None, it's valid
+        if check:
+            history_parser.check_and_write(fx_input.get())
+            update_options()
 
 
 r_sum_btn.config(command=riemann_popup)
@@ -107,5 +142,4 @@ run_btn.grid(row=0, column=0, columnspan=2, sticky="W")
 
 
 GraphGen.starting_graph()
-var = tkinter.StringVar(root)
 root.mainloop()
