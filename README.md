@@ -2,7 +2,7 @@
 # Set-up Calculator:
 1. Open folder atau script 'main_script.py" dalam VSCode atau IDE lainnya (jangan langsung dibuka dari python atau file explorer karena akan error).
 2. Kemudian di VSCode, ketuk Explorer dan open folder yang sudah didownload dan berisi seluruh script serta graph_history.txt
-3. Kemudian, run program dari main_scripy.py
+3. Kemudian, run program dari main_script.py
 
 # Selamat datang di Kalkulator grafik sederhana ini!
 # Aturan untuk Calculator:
