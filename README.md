@@ -17,3 +17,5 @@
 3. Akan tetapi, untuk aturan no.2, jika nilai upper limit lebih kecil dari lower limit, visualisasi riemann tidak akan akurat (hal serupa juga muncul di Desmos),
    tetapi untuk hasil perhitungan integralnya sudah pasti akurat ^
 4. Untuk menghilangkan visualisasi Riemann, tekan ulang tombol 'Generate Graph'
+
+# Bagi yang merasa fokus, silakan interupsi saya!
