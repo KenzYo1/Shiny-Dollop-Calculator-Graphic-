@@ -367,35 +367,34 @@ def calculate(fx):
     return fx[0] # return hasil akhir perhitungan
 
 # Main menu
-print("Welcome to graph calculator")
-fx_input = list(input("input function: "))
-try:
-    # preprocess parser
-    fx_input = combine_numbers(fx_input)
-    fx_input = convert_commas(fx_input)
-    fx_input = combine_decimals(fx_input)
-    fx_input = convert_negatives(fx_input)
-    fx_input = convert_to_floats(fx_input)
-    fx_input = convert_constants(fx_input)
-    fx_input = convert_operators(fx_input)
-    fx_input = convert_mult_shorthand(fx_input)
-except:
-    fx_input = [None]
-    
-# setup range X
-x_range = [-500 ,500]
-x_step = 0.01
-points = [None]
-
-# menghitung Y untuk setiap X 
-for i in range(int((x_range[1]-x_range[0])/x_step)+1):
-    x = (i+x_range[0]/x_step)*x_step
+def parse(fx_input):
     try:
-        # masukan nilai X ke fungsi
-        y = calculate(insert_x(duplicate(fx_input), x))
+        # preprocess parser
+        fx_input = combine_numbers(fx_input)
+        fx_input = convert_commas(fx_input)
+        fx_input = combine_decimals(fx_input)
+        fx_input = convert_negatives(fx_input)
+        fx_input = convert_to_floats(fx_input)
+        fx_input = convert_constants(fx_input)
+        fx_input = convert_operators(fx_input)
+        fx_input = convert_mult_shorthand(fx_input)
     except:
-        y = None
-    if i >= len(points):
-        points = lengthen(points)
-    # simpan hasil sebagai koordinat [x, y]
-    points[i] = [x, y]
+        fx_input = [None]
+
+    # setup range X
+    x_range = [-500 ,500]
+    x_step = 0.01
+    points = [None]
+
+    # menghitung Y untuk setiap X
+    for i in range(int((x_range[1]-x_range[0])/x_step)+1):
+        x = (i+x_range[0]/x_step)*x_step
+        try:
+            # masukan nilai X ke fungsi
+            y = calculate(insert_x(duplicate(fx_input), x))
+        except:
+            y = None
+        if i >= len(points):
+            points = lengthen(points)
+        # simpan hasil sebagai koordinat [x, y]
+        points[i] = [x, y]
