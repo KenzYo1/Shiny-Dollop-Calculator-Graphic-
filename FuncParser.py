@@ -1,17 +1,22 @@
 import math
 
+# manage list secara manual agar list bisa seperti dynamic list
+
 def lengthen(array):
+    # bikin list baru dengan size 2x size awal
     new_array = [None] * (len(array) * 2)
     for i in range(len(array)):
         new_array[i] = array[i]
     return new_array
 
 def add_to_back(array, item):
+    # menambahkan item ke bagian belakang list seperti append
     if len(array) == 0:
         array = [None]
     if array == [None]:
         array[0] = item
         return array
+    # kalau penuh, list akan diresize pakai lengthen()
     elif array[-1] != None:
         array = lengthen(array)
     for i in range(len(array)):
@@ -21,6 +26,7 @@ def add_to_back(array, item):
     return array
 
 def add_to(array, index, item):
+    # geser elemen ke kanan, lalu masukkan item
     if array[-1]:
         array = lengthen(array)
     for i in range(len(array)-index):
@@ -30,18 +36,23 @@ def add_to(array, index, item):
     return array
 
 def remove_at(array, index):
+    # menghapus item dan geser elemen dari kanan ke kiri untuk menimpa item yang dihapus
     for i in range(len(array)-index-1):
         array[i+index] = array[i+index+1]
     array[-1] = None
     return array
 
 def duplicate(array):
+    # membuat list baru dengan isi list awal 
     new_array = [None]*len(array)
     for i in range(len(array)):
         new_array[i] = array[i]
     return new_array
 
+# mengubah string menjadi matematik agar bisa dihitung
+
 def is_number(item):
+    # cek apakah item sebuah number
     if isinstance(item, float):
         return True
     numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
@@ -50,12 +61,14 @@ def is_number(item):
     return False
 
 def is_operator(item):
+    # cek apakah item sebuah operator (trigonometri / logaritma)
     operators = ["log", "ln", "sin", "cos", "tan", "asin", "acos", "atan"]
     if item in operators:
         return True
     return False
 
 def combine_numbers(fx):
+    # menggabungkan digit menjadi satu integer
     i = 0
     while i < len(fx)-1 and fx[i+1] != None:
         if is_number(fx[i]) and is_number(fx[i+1]):
@@ -66,12 +79,14 @@ def combine_numbers(fx):
     return fx
 
 def convert_commas(fx):
+    # mengubah comma dari "," jadi "."
     for i in range(len(fx)):
         if fx[i] == ",":
             fx[i] = "."
     return fx
 
 def combine_decimals(fx):
+    # gabungkan angka dengan titik desimal,cth. ['6', '.', '7'] jadi ['6.7']
     i = 0
     while i < len(fx)-1:
         if fx[i] == ".":
@@ -83,6 +98,7 @@ def combine_decimals(fx):
     return fx
 
 def convert_negatives(fx):
+    # membedakan tanda kurang (-) dengan angka negatif
     i = 0
     while i < len(fx)-1:
         if fx[i] == "-":
@@ -98,6 +114,7 @@ def convert_negatives(fx):
     return fx
 
 def convert_to_floats(fx):
+    # convert tipe data string angka menjadi float
     for i in range(len(fx)):
         if not fx[i]:
             return fx
@@ -106,6 +123,7 @@ def convert_to_floats(fx):
     return fx
 
 def convert_constants(fx):
+    # ubah 'pi' dan 'e' jadi value math sebenarnya pakai library math
     i = 0
     while i < len(fx):
         match fx[i]:
@@ -119,6 +137,7 @@ def convert_constants(fx):
     return fx
 
 def convert_operators(fx):
+    # parsing teks fungsi, cth. gabung ['s','i','n'] jadi "sin"
     i = 0
     while i < len(fx):
         match fx[i]:
@@ -171,6 +190,7 @@ def convert_operators(fx):
     return fx
 
 def convert_mult_shorthand(fx):
+    # handle perkalian implisit,cth. "2x" jadi "2*x"
     i = 0
     while i < len(fx)-1 and fx[i] and fx[i+1]:
         if ((is_number(fx[i]) or fx[i] == "x") and (is_number(fx[i+1]) or fx[i+1] == "x" or fx[i+1] == "("))\
@@ -181,11 +201,13 @@ def convert_mult_shorthand(fx):
     return fx
 
 def insert_x(fx, x):
+    # substitusi variabel 'x' dengan nilai angka
     for i in range(len(fx)):
         if fx[i] == "x":
             fx[i] = x
     return fx
 
+# cek prioritas urutan perhitungan
 
 def check_brackets(fx):
     for i in range(len(fx)):
@@ -193,20 +215,17 @@ def check_brackets(fx):
             return True
     return False
 
-
 def check_operators(fx):
     for i in fx:
         if is_operator(i):
             return True
     return False
 
-
 def check_powers(fx):
     for i in range(len(fx)):
         if fx[i] == "^":
             return True
     return False
-
 
 def check_multiplication_division(fx):
     for i in range(len(fx)):
@@ -216,14 +235,21 @@ def check_multiplication_division(fx):
 
 
 def calculate(fx):
+    # perhitungan dimulai dengan rekursif function untuk menghitung
+    # mengikuti aturan tanda kurung, eksponen, kali/bagi, tambah/kurang
     i = 0
+    # cek status operator apa saja yang ada
     has_brackets = check_brackets(fx)
     has_operators = check_operators(fx)
     has_powers = check_powers(fx)
     has_multiplication_division = check_multiplication_division(fx)
 
+    # iterasi semua input
     while i < len(fx):
+        
+        # ambil isi dalam kurung
         if fx[i] == "(":
+            fx = remove_at(fx, i)
             fx = remove_at(fx, i)
             fx2 = []
             bracket_count = 0
@@ -235,12 +261,14 @@ def calculate(fx):
                 if bracket_count >= 0:
                     fx2 = add_to_back(fx2, fx[i])
                     fx = remove_at(fx, i)
-            fx[i] = calculate(fx2)
+            fx[i] = calculate(fx2) # ganti dengan hasil hitungan
+            # cek ulang karena isi array berubah
             has_brackets = check_brackets(fx)
             has_operators = check_operators(fx)
             has_powers = check_powers(fx)
             has_multiplication_division = check_multiplication_division(fx)
             i = 0
+        # handle absolut |x|
         elif fx[i] == "|":
             remove_at(fx, i)
             fx2 = []
@@ -248,107 +276,126 @@ def calculate(fx):
                 fx2 = add_to_back(fx2, fx[i])
                 fx = remove_at(fx, i)
             fx[i] = abs(calculate(fx2))
+            # cek ulang karena isi array berubah
             has_brackets = check_brackets(fx)
             has_operators = check_operators(fx)
             has_powers = check_powers(fx)
             has_multiplication_division = check_multiplication_division(fx)
             i = 0
-        elif fx[i] == "log" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.log10(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "ln" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.log(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "sin" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.sin(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "cos" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.cos(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "tan" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.tan(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "asin" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.asin(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "acos" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.acos(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
-        elif fx[i] == "atan" and not is_operator(fx[i+1]) and not has_brackets:
-            fx[i] = math.atan(fx[i+1])
-            remove_at(fx, i+1)
-            has_operators = check_operators(fx)
-            i = 0
+        # handle fungsi trigonometri
+        if not is_operator(fx[i+1]) and not has_brackets:
+            if fx[i] == "log" :
+                fx[i] = math.log10(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "ln" :
+                fx[i] = math.log(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "sin" :
+                fx[i] = math.sin(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "cos" :
+                fx[i] = math.cos(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "tan" :
+                fx[i] = math.tan(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "asin" :
+                fx[i] = math.asin(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "acos" :
+                fx[i] = math.acos(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+            elif fx[i] == "atan" :
+                fx[i] = math.atan(fx[i+1])
+                remove_at(fx, i+1)
+                has_operators = check_operators(fx)
+                i = 0
+        # handle Pangkat (^)
         elif fx[i] == "^" and not has_brackets and not has_operators:
             fx[i-1] = fx[i-1] ** fx[i+1]
             if isinstance(fx[i-1], complex):
-                return None
+                return None 
             remove_at(fx, i)
             remove_at(fx, i)
             has_powers = check_powers(fx)
             i = 0
-        elif fx[i] == "*" and not has_brackets and not has_operators and not has_powers:
-            fx[i-1] = fx[i-1] * fx[i+1]
-            remove_at(fx, i)
-            remove_at(fx, i)
-            has_multiplication_division = check_multiplication_division(fx)
-            i = 0
-        elif fx[i] == "/" and not has_brackets and not has_operators and not has_powers:
-            fx[i-1] = fx[i-1] / fx[i+1]
-            remove_at(fx, i)
-            remove_at(fx, i)
-            has_multiplication_division = check_multiplication_division(fx)
-            i = 0
-        elif fx[i] == "+" and not has_brackets and not has_operators and not has_powers and not has_multiplication_division:
-            fx[i-1] = fx[i-1] + fx[i+1]
-            remove_at(fx, i)
-            remove_at(fx, i)
-            i = 0
-        elif fx[i] == "-" and not has_brackets and not has_operators and not has_powers and not has_multiplication_division:
-            fx[i-1] = fx[i-1] - fx[i+1]
-            remove_at(fx, i)
-            remove_at(fx, i)
-            i = 0
+        # handle kali/bagi dan tambah/kurang
+        if not (has_brackets or has_operators or has_powers):
+            if fx[i] == "*":
+                fx[i-1] = fx[i-1] * fx[i+1]
+                remove_at(fx, i)
+                remove_at(fx, i)
+                has_multiplication_division = check_multiplication_division(fx)
+                i = 0
+            elif fx[i] == "/":
+                fx[i-1] = fx[i-1] / fx[i+1]
+                remove_at(fx, i)
+                remove_at(fx, i)
+                has_multiplication_division = check_multiplication_division(fx)
+                i = 0
+            elif not has_multiplication_division:
+                if fx[i] == "+":
+                    fx[i-1] = fx[i-1] + fx[i+1]
+                    remove_at(fx, i)
+                    remove_at(fx, i)
+                    i = 0
+                elif fx[i] == "-":
+                    fx[i-1] = fx[i-1] - fx[i+1]
+                    remove_at(fx, i)
+                    remove_at(fx, i)
+                    i = 0
+                else:
+                    i += 1
+            else:
+                i += 1
         else:
             i += 1
-    return fx[0]
+    return fx[0] # return hasil akhir perhitungan
 
-def parse(fx_input):
+# Main menu
+print("Welcome to graph calculator")
+fx_input = list(input("input function: "))
+try:
+    # preprocess parser
+    fx_input = combine_numbers(fx_input)
+    fx_input = convert_commas(fx_input)
+    fx_input = combine_decimals(fx_input)
+    fx_input = convert_negatives(fx_input)
+    fx_input = convert_to_floats(fx_input)
+    fx_input = convert_constants(fx_input)
+    fx_input = convert_operators(fx_input)
+    fx_input = convert_mult_shorthand(fx_input)
+except:
+    fx_input = [None]
+    
+# setup range X
+x_range = [-500 ,500]
+x_step = 0.01
+points = [None]
+
+# menghitung Y untuk setiap X 
+for i in range(int((x_range[1]-x_range[0])/x_step)+1):
+    x = (i+x_range[0]/x_step)*x_step
     try:
-        fx_input = combine_numbers(fx_input)
-        fx_input = convert_commas(fx_input)
-        fx_input = combine_decimals(fx_input)
-        fx_input = convert_negatives(fx_input)
-        fx_input = convert_to_floats(fx_input)
-        fx_input = convert_constants(fx_input)
-        fx_input = convert_operators(fx_input)
-        fx_input = convert_mult_shorthand(fx_input)
+        # masukan nilai X ke fungsi
+        y = calculate(insert_x(duplicate(fx_input), x))
     except:
-        fx_input = [None]
-    x_range = [-500 ,500]
-    x_step = 0.01
-    points = [None]
-    for i in range(int((x_range[1]-x_range[0])/x_step)+1):
-        x = (i+x_range[0]/x_step)*x_step
-        try:
-            y = calculate(insert_x(duplicate(fx_input), x))
-        except:
-            y = None
-        if i >= len(points):
-            points = lengthen(points)
-        points[i] = [x, y]
-    return points
+        y = None
+    if i >= len(points):
+        points = lengthen(points)
+    # simpan hasil sebagai koordinat [x, y]
+    points[i] = [x, y]
