@@ -1,5 +1,10 @@
+2x
+2
 3x
 x+5
 x^2
 sinx
 logx
+Empty
+Empty
+Empty

@@ -126,6 +126,7 @@ def run():
     GraphGen.turt3.clear()
     GraphGen.riemann_called = False
     fx = FuncParser.parse(list(fx_input.get()))
+    print(fx)
     GraphGen.points = fx
     GraphGen.gen_graph(fx, GraphGen.zoom_amount)
     GraphGen.turt2.screen.update()
